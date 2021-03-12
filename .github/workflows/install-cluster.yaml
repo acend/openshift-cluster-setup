@@ -24,12 +24,25 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install openshift-install binary
+      uses: redhat-actions/openshift-tools-installer@v1
+      with:
+        openshift-install: "${{ github.event.inputs.clusterVersion }}"
+
     - name: Provide install config
       env:
         OPENSHIFT_PULL_SECRET: ${{ secrets.OPENSHIFT_PULL_SECRET }}
       run: |
         eval "echo \"$(cat ${GITHUB_WORKSPACE}/install-config.yaml.template)\"" > ${GITHUB_WORKSPACE}/install-config.yaml
 
-    - name: Print install-config
+    - name: Create manifests
       run: |
-        cat ${GITHUB_WORKSPACE}/install-config.yaml
+        openshift-install create manifests --dir ${GITHUB_WORKSPACE}
+
+    - name: Customize wildcard dns
+      run: |
+        sed -i "s/domain.*/domain: ${CLUSTERNAME}.${BASEDOMAIN}/g" ${GITHUB_WORKSPACE}/manifests/cluster-ingress-02-config.yml
+
+    - name: Test sed command result
+      run: |
+        cat ${GITHUB_WORKSPACE}/manifests/cluster-ingress-02-config.yml
