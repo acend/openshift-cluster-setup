@@ -30,4 +30,4 @@ platform:
     userTags:
       purpose: training
 publish: External
-pullSecret: ${OPENSHIFT_PULL_SECRET}
+pullSecret: \'${OPENSHIFT_PULL_SECRET}\'
