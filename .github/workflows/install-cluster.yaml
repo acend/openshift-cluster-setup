@@ -23,11 +23,8 @@ jobs:
       CLUSTERNAME: ${{ github.event.inputs.clusterName }}
     steps:
     - uses: actions/checkout@v2
-
-    - name: Install openshift-install binary
-      uses: redhat-actions/openshift-tools-installer@v1
       with:
-        openshift-install: "${{ github.event.inputs.clusterVersion }}"
+        ref: 'actions-test'
 
     - name: Provide install config
       env:
@@ -38,7 +35,3 @@ jobs:
     - name: Print install-config
       run: |
         cat ${GITHUB_WORKSPACE}/install-config.yaml
-
-    - name: Test openshift-install version
-      run: |
-        openshift-install version
